@@ -1,0 +1,59 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output
+build/
+dist/
+.cache/
+.next/
+out/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+logs
+*.log
+yarn.lock
+
+# Coverage reports
+coverage/
+*.lcov
+
+# React and Next.js specific cache files
+.next/
+.vercel/
+.netlify/
+
+# Mac system files
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes
+
+# User-specific files
+*.bak
+*.tmp
+*.sublime-workspace
+
+# Misc
+npm-debug.log*
+yarn-debug.log*
