@@ -1,26 +1,23 @@
-FROM node:20.11.1-alpine3.19  as build
+# Use the official Node.js image as the base image
+FROM node:20.11.1-alpine3.19
 
+# Set the working directory
 WORKDIR /usr/src/app
 
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
 COPY . .
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" npm ci
+# Build the application (if applicable)
+RUN npm run build
 
-RUN NODE_OPTIONS="--max-old-space-size=4096" npm run build
+# Expose the port the app runs on
+EXPOSE 3000
 
-FROM nginx:1.25.4-alpine3.18-slim as fnl_base_image
-
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
-COPY --from=build /usr/src/app/conf/inject.template.js /usr/share/nginx/html/inject.template.js
-COPY --from=build /usr/src/app/conf/nginx.conf /etc/nginx/conf.d/configfile.template
-COPY --from=build /usr/src/app/conf/entrypoint.sh /
-
-ENV PORT 80
-
-ENV HOST 0.0.0.0
-
-RUN sh -c "envsubst '\$PORT'  < /etc/nginx/conf.d/configfile.template > /etc/nginx/conf.d/default.conf"
-
-EXPOSE 80
-
-ENTRYPOINT [ "sh", "/entrypoint.sh" ]
+# Define the command to run the application
+CMD ["npm", "start"]
