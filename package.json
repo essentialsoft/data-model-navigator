@@ -1,7 +1,7 @@
 {
-  "homepage": "https://CBIIT.github.io/crdc-data-model-navigator/",
-  "name": "crdc-data-model-navigator",
-  "version": "3.2.0",
+  "homepage": "/",
+  "name": "data-model-navigator",
+  "version": "1.0.0",
   "dependencies": {
     "@apollo/client": "^3.9.8",
     "@axe-core/react": "^4.9.0",
