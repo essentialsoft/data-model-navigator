@@ -14,7 +14,7 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => (
   <>
-    <Helmet defaultTitle="CRDC Data Model Navigator">
+    <Helmet defaultTitle="ESI Data Model Navigator">
       <link rel="preconnect" href="https://fonts.gstatic.com" />
       <link
         href={
