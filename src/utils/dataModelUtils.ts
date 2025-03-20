@@ -153,7 +153,7 @@ export const traverseAndReplace = (
         const noValuesMatch = mapKeyPrefixesNoValues.get(fullKey);
         const property = node.properties[key];
         const fallbackMessage = [
-          "Permissible values are currently not available. Please contact the Data Hub HelpDesk at NCICRDCHelpDesk@mail.nih.gov",
+          "Permissible values are currently not available. Please contact us at modelnavigator@essential-soft.com",
         ];
 
         if (prefixMatch) {

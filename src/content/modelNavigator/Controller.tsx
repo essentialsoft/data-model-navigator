@@ -13,7 +13,7 @@ const ModelNavigatorController: React.FC = () => {
 
   const query = useQuery();
   const defaultConfig =
-    "https://raw.githubusercontent.com/jonkiky/crdc-data-model-navigator/refs/heads/data/ctdc/";
+    "https://raw.githubusercontent.com/essentialsoft/mock-mdf-model/refs/heads/mock-test/7.1.9/";
   let config = query.get("config") || defaultConfig; // Fallback to defaultConfig if `config` is not present
 
   // Ensure config has a trailing backslash

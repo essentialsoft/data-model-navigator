@@ -19,8 +19,7 @@ const DMN = LazyLoader(lazy(() => import("./content/modelNavigator/Controller"))
 
 const DMNWrapper: React.FC = () => {
   const defaultConfig =
-    "https://raw.githubusercontent.com/CBIIT/ctdc-data-model-navigator-landing/refs/heads/main/example/CTDC/1.0.0/";
-  // "https://raw.githubusercontent.com/jonkiky/crdc-data-model-navigator/refs/heads/data/ctdc/";
+    "https://raw.githubusercontent.com/essentialsoft/mock-mdf-model/refs/heads/mock-test/7.1.9/";
   const config = useQueryConfig(defaultConfig);
 
   return <DMN config={config} />;
@@ -35,10 +34,6 @@ const routes: RouteObject[] = [
     children: [
       {
         path: "/",
-        element: <DMNWrapper />,
-      },
-      {
-        path: "/crdc-data-model-navigator",
         element: <DMNWrapper />,
       },
       {
