@@ -38,7 +38,7 @@ export const buildAssetUrls = (dc: DataCommon): ModelAssetUrls => {
       : null,
     navigator_icon: dc?.assets?.["model-navigator-logo"]
       ? `${path}/${dc?.assets?.["model-navigator-logo"]}`
-      : GenericModelLogo,
+      : "",
     changelog: dc.assets?.["release-notes"]
       ? `${path}/${dc.assets?.["release-notes"]}`
       : null,
