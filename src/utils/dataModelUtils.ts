@@ -24,18 +24,26 @@ export const fetchManifest = async (DataCommon): Promise<DataModelManifest> => {
  * @param dc The data common to build the asset URLs for
  * @returns ModelAssetUrls
  */
-export const buildAssetUrls = (dc: DataCommon): ModelAssetUrls => ({
-  model_files: dc?.assets?.["model-files"]?.map((file) => `${dc?.assets["path"]}/${file}`) || [],
-  readme: dc?.assets?.["readme-file"]
-    ? `${dc?.assets["path"]}/${dc?.assets?.["readme-file"]}`
-    : null,
-  loading_file: dc?.assets?.["loading-file"]
-    ? `${dc?.assets["path"]}/${dc?.assets?.["loading-file"]}`
-    : null,
-  navigator_icon: dc?.assets?.["model-navigator-logo"]
-    ? `${dc?.assets["path"]}/${dc?.assets?.["model-navigator-logo"]}`
-    : GenericModelLogo,
-});
+export const buildAssetUrls = (dc: DataCommon): ModelAssetUrls => {
+  const path = dc?.assets["path"];
+
+  return {
+    model_files:
+      dc?.assets?.["model-files"]?.map((file) => `${path}/${file}`) || [],
+    readme: dc?.assets?.["readme-file"]
+      ? `${path}/${dc?.assets?.["readme-file"]}`
+      : null,
+    loading_file: dc?.assets?.["loading-file"]
+      ? `${path}/${dc?.assets?.["loading-file"]}`
+      : null,
+    navigator_icon: dc?.assets?.["model-navigator-logo"]
+      ? `${path}/${dc?.assets?.["model-navigator-logo"]}`
+      : GenericModelLogo,
+    changelog: dc.assets?.["release-notes"]
+      ? `${path}/${dc.assets?.["release-notes"]}`
+      : null,
+  };
+};
 
 /**
  * Helper function to SAFELY build a set of base filter containers for the Data Model Navigator
@@ -44,7 +52,9 @@ export const buildAssetUrls = (dc: DataCommon): ModelAssetUrls => ({
  * @param dc The data common to build the base filters for
  * @returns An array of base filters used by Data Model Navigator
  */
-export const buildBaseFilterContainers = (dc: DataCommon): { [key: string]: [] } => {
+export const buildBaseFilterContainers = (
+  dc: DataCommon
+): { [key: string]: [] } => {
   if (!dc || !dc?.configuration?.facetFilterSearchData) {
     return {};
   }
@@ -83,11 +93,17 @@ export const buildFilterOptionsList = (dc: DataCommon): string[] => {
   }
 
   return dc.configuration.facetFilterSearchData.reduce((a, searchData) => {
-    if (!Array.isArray(searchData?.checkboxItems) || searchData.checkboxItems.length === 0) {
+    if (
+      !Array.isArray(searchData?.checkboxItems) ||
+      searchData.checkboxItems.length === 0
+    ) {
       return a;
     }
 
-    return [...a, ...searchData.checkboxItems.map((item) => item?.name?.toLowerCase())];
+    return [
+      ...a,
+      ...searchData.checkboxItems.map((item) => item?.name?.toLowerCase()),
+    ];
   }, []);
 };
 
@@ -102,14 +118,17 @@ export const updateEnums = (
   response: RetrieveCDEsResp["retrieveCDEs"] = [],
   apiError = false
 ) => {
-  const responseMap: Map<string, RetrieveCDEsResp["retrieveCDEs"][0]> = new Map();
+  const responseMap: Map<string, RetrieveCDEsResp["retrieveCDEs"][0]> =
+    new Map();
 
   defaultTo(response, []).forEach((item) =>
     responseMap.set(`${item.CDECode}.${item.CDEVersion}`, item)
   );
 
-  const resultMap: Map<string, RetrieveCDEsResp["retrieveCDEs"][0] & { CDEOrigin: string }> =
-    new Map();
+  const resultMap: Map<
+    string,
+    RetrieveCDEsResp["retrieveCDEs"][0] & { CDEOrigin: string }
+  > = new Map();
   const mapKeyPrefixes: Map<string, string> = new Map();
   const mapKeyPrefixesNoValues: Map<string, string> = new Map();
 
@@ -127,14 +146,23 @@ export const updateEnums = (
 
   const newObj = JSON.parse(JSON.stringify(dataList));
 
-  traverseAndReplace(newObj, resultMap, mapKeyPrefixes, mapKeyPrefixesNoValues, apiError);
+  traverseAndReplace(
+    newObj,
+    resultMap,
+    mapKeyPrefixes,
+    mapKeyPrefixesNoValues,
+    apiError
+  );
 
   return newObj;
 };
 
 export const traverseAndReplace = (
   node,
-  resultMap: Map<string, RetrieveCDEsResp["retrieveCDEs"][0] & { CDEOrigin: string }>,
+  resultMap: Map<
+    string,
+    RetrieveCDEsResp["retrieveCDEs"][0] & { CDEOrigin: string }
+  >,
   mapKeyPrefixes: Map<string, string>,
   mapKeyPrefixesNoValues: Map<string, string>,
   apiError: boolean,
@@ -157,8 +185,13 @@ export const traverseAndReplace = (
         ];
 
         if (prefixMatch) {
-          const { CDECode, CDEFullName, CDEVersion, CDEOrigin, PermissibleValues } =
-            resultMap.get(prefixMatch);
+          const {
+            CDECode,
+            CDEFullName,
+            CDEVersion,
+            CDEOrigin,
+            PermissibleValues,
+          } = resultMap.get(prefixMatch);
 
           // Populate CDE details
           property.CDEFullName = CDEFullName;
@@ -168,7 +201,10 @@ export const traverseAndReplace = (
           property.CDEOrigin = CDEOrigin;
 
           // Populate Permissible Values if available from API
-          if (Array.isArray(PermissibleValues) && PermissibleValues.length > 0) {
+          if (
+            Array.isArray(PermissibleValues) &&
+            PermissibleValues.length > 0
+          ) {
             property.enum = PermissibleValues;
             // Permissible Values from API are empty, convert property to "string" type
           } else if (
@@ -183,7 +219,10 @@ export const traverseAndReplace = (
 
         // API did not return any Permissible Values, populate with fallback message
         if (noValuesMatch && property.enum) {
-          Logger.error("Unable to match CDE for property", node?.properties?.[key]);
+          Logger.error(
+            "Unable to match CDE for property",
+            node?.properties?.[key]
+          );
           property.enum = fallbackMessage;
         }
       }
@@ -203,3 +242,4 @@ export const traverseAndReplace = (
     }
   }
 };
+
