@@ -4,11 +4,17 @@ import {
   ddgraph,
   moduleReducers as submission,
   versionInfo,
+  changelogInfo,
   getModelExploreData,
+  getChangelog,
 } from "data-model-navigator";
 import { useLazyQuery } from "@apollo/client";
 import { defaultTo } from "lodash";
-import { baseConfiguration, defaultReadMeTitle, graphViewConfig } from "../config/ModelNavigator";
+import {
+  baseConfiguration,
+  defaultReadMeTitle,
+  graphViewConfig,
+} from "../config/ModelNavigator";
 import {
   buildAssetUrls,
   buildBaseFilterContainers,
@@ -27,7 +33,7 @@ export type ReduxStoreResult = [
 ];
 
 const makeStore = (): Store => {
-  const reducers = { ddgraph, versionInfo, submission };
+  const reducers = { ddgraph, versionInfo, submission, changelogInfo };
   const newStore = createStore(combineReducers(reducers));
 
   // @ts-ignore
@@ -85,10 +91,18 @@ const useBuildReduxStore = (): ReduxStoreResult => {
     setStatus("loading");
 
     const assets = buildAssetUrls(datacommon);
-    const response = await getModelExploreData(...assets.model_files)?.catch((e) => {
+
+    const changelogMD = await getChangelog(assets?.changelog)?.catch((e) => {
       Logger.error(e);
       return null;
     });
+
+    const response = await getModelExploreData(...assets.model_files)?.catch(
+      (e) => {
+        Logger.error(e);
+        return null;
+      }
+    );
     if (!response?.data || !response?.version) {
       setStatus("error");
       return;
@@ -102,7 +116,10 @@ const useBuildReduxStore = (): ReduxStoreResult => {
       try {
         const CDEs = await retrieveCDEs({
           variables: {
-            cdeInfo: cdeInfo.map(({ CDECode, CDEVersion }) => ({ CDECode, CDEVersion })),
+            cdeInfo: cdeInfo.map(({ CDECode, CDEVersion }) => ({
+              CDECode,
+              CDEVersion,
+            })),
           },
         });
 
@@ -135,9 +152,12 @@ const useBuildReduxStore = (): ReduxStoreResult => {
         facetfilterConfig: {
           ...baseConfiguration,
           facetSearchData: datacommon.configuration.facetFilterSearchData,
-          facetSectionVariables: datacommon.configuration.facetFilterSectionVariables,
+          facetSectionVariables:
+            datacommon.configuration.facetFilterSectionVariables,
           baseFilters: buildBaseFilterContainers(datacommon),
-          filterSections: datacommon.configuration.facetFilterSearchData.map((s) => s?.datafield),
+          filterSections: datacommon.configuration.facetFilterSearchData.map(
+            (s) => s?.datafield
+          ),
           filterOptions: buildFilterOptionsList(datacommon),
         },
         pageConfig: {
@@ -146,7 +166,8 @@ const useBuildReduxStore = (): ReduxStoreResult => {
         },
         readMeConfig: {
           readMeUrl: assets.readme,
-          readMeTitle: datacommon.configuration?.readMeTitle || defaultReadMeTitle,
+          readMeTitle:
+            datacommon.configuration?.readMeTitle || defaultReadMeTitle,
           allowDownload: false,
         },
         pdfDownloadConfig: datacommon.configuration.pdfConfig,
@@ -155,6 +176,14 @@ const useBuildReduxStore = (): ReduxStoreResult => {
           url: assets.loading_file,
         },
         graphViewConfig,
+      },
+    });
+
+    store.dispatch({
+      type: "RECEIVE_CHANGELOG_INFO",
+      data: {
+        changelogMD,
+        changelogTabName: "Version History",
       },
     });
 
