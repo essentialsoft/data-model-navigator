@@ -109,32 +109,32 @@ const useBuildReduxStore = (): ReduxStoreResult => {
     }
 
     let dictionary;
-    const { cdeMap, data: dataList } = response;
+    const { /* cdeMap, */ data: dataList } = response;
 
-    if (cdeMap) {
-      const cdeInfo: CDEInfo[] = Array.from(response.cdeMap.values());
-      try {
-        const CDEs = await retrieveCDEs({
-          variables: {
-            cdeInfo: cdeInfo.map(({ CDECode, CDEVersion }) => ({
-              CDECode,
-              CDEVersion,
-            })),
-          },
-        });
+    // if (cdeMap) {
+    //   const cdeInfo: CDEInfo[] = Array.from(response.cdeMap.values());
+    //   try {
+    //     const CDEs = await retrieveCDEs({
+    //       variables: {
+    //         cdeInfo: cdeInfo.map(({ CDECode, CDEVersion }) => ({
+    //           CDECode,
+    //           CDEVersion,
+    //         })),
+    //       },
+    //     });
 
-        if (retrieveCDEsError) {
-          dictionary = updateEnums(cdeMap, dataList, [], true);
-        } else {
-          const retrievedCDEs = defaultTo(CDEs.data.retrieveCDEs, []);
-          dictionary = updateEnums(cdeMap, dataList, retrievedCDEs);
-        }
-      } catch (error) {
-        dictionary = updateEnums(cdeMap, dataList, [], true);
-      }
-    } else {
-      dictionary = dataList;
-    }
+    //     if (retrieveCDEsError) {
+    //       dictionary = updateEnums(cdeMap, dataList, [], true);
+    //     } else {
+    //       const retrievedCDEs = defaultTo(CDEs.data.retrieveCDEs, []);
+    //       dictionary = updateEnums(cdeMap, dataList, retrievedCDEs);
+    //     }
+    //   } catch (error) {
+    //     dictionary = updateEnums(cdeMap, dataList, [], true);
+    //   }
+    // } else {
+    dictionary = dataList;
+    // }
 
     store.dispatch({ type: "RECEIVE_VERSION_INFO", data: response.version });
 
@@ -199,3 +199,4 @@ const useBuildReduxStore = (): ReduxStoreResult => {
 };
 
 export default useBuildReduxStore;
+
