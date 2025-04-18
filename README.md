@@ -1,1 +1,1 @@
-# data-model-navigator
+# data-model-navigator with CDE feature enabled. 
